@@ -1,23 +1,17 @@
-# HTTP API Design Guide
+# HTTP API 設計指南
 
-## Introduction
+## 介紹
 
-This guide describes a set of HTTP+JSON API design practices, originally
-extracted from work on the [Heroku Platform API](https://devcenter.heroku.com/articles/platform-api-reference).
+這份指南描述一系列 HTTP+JSON 的 API 設計經驗，這些最初來自於 [Heroku 平台 API](https://devcenter.heroku.com/articles/platform-api-reference) 的工作經歷。
 
-This guide informs additions to that API and also guides new internal
-APIs at Heroku. We hope it’s also of interest to API designers
-outside of Heroku.
+這份指南補強了原本的 API，也對 Heroku 新的內部
+API 起到了引導的作用。我們希望 Heroku 外面的 API 設計者也會對此感興趣。
 
-Our goals here are consistency and focusing on business logic while
-avoiding design bikeshedding. We’re looking for _a good, consistent,
-well-documented way_ to design APIs, not necessarily _the only/ideal
-way_.
+我們的目標是在保持一致性與關注業務邏輯的同時，也能避免設計歧異。我們在尋找_一個良好、一致並充分文件化的方法_來設計 API，而不需要是_唯一/理想化的方法_。
 
-We assume you’re familiar with the basics of HTTP+JSON APIs and won’t
-cover all of the fundamentals of those in this guide.
+本文假設你已經熟悉 HTTP+JSON API 的基礎知識，因此不會在這份指南中涵蓋所有的基礎概念。
 
-We welcome [contributions](CONTRIBUTING.md) to this guide.
+歡迎對這份指南做出[貢獻](CONTRIBUTING.md)。
 
 ## Contents
 
@@ -157,7 +151,7 @@ resource on 200 and 201 responses, including `PUT`/`PATCH` and `DELETE`
 requests, e.g.:
 
 ```bash
-$ curl -X DELETE \  
+$ curl -X DELETE \
   https://service.com/apps/1f9b/domains/0fd4
 
 HTTP/1.1 200 OK
@@ -175,7 +169,7 @@ Content-Type: application/json;charset=utf-8
 e.g.:
 
 ```bash
-$ curl -X DELETE \  
+$ curl -X DELETE \
   https://service.com/apps/1f9b/dynos/05bd
 
 HTTP/1.1 202 Accepted
@@ -417,7 +411,7 @@ Instead of e.g.:
 }
 ```
 
-You may consider optionally providing a way for clients to retreive 
+You may consider optionally providing a way for clients to retreive
 more verbose response, either via a query parameter (e.g. `?pretty=true`)
 or via an `Accept` header param (e.g.
 `Accept: application/vnd.heroku+json; version=3; indent=4;`).
