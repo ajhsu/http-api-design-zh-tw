@@ -48,43 +48,25 @@ API 起到了引導的作用。我們希望 Heroku 外面的 API 設計者也會
 
 #### 關注點分離
 
-Keep things simple while designing by separating the concerns between the
-different parts of the request and response cycle. Keeping simple rules here
-allows for greater focus on larger and harder problems.
+保持事情簡單，同時用請求與回應週期的不同部分之間關注點分離的方式來設計。保持簡單的原則讓我們能專注在更大、更難的問題上面。
 
-Requests and responses will be made to address a particular resource or
-collection. Use the path to indicate identity, the body to transfer the
-contents and headers to communicate metadata. Query params may be used as a
-means to pass header information also in edge cases, but headers are preferred
-as they are more flexible and can convey more diverse information.
+產生的請求與回應應該指向特定資源或資源集合。使用路徑來表示資源，使用主體來傳輸內容，使用標頭來溝通元資料 (metadata)。在特殊案例中，查詢參數也可以作為一個傳遞標頭資訊的手段，但還是應該優先使用標頭，因為它更靈活並且可以傳達更多樣化的資訊。
 
 #### 要求安全的連接
 
-Require secure connections with TLS to access the API, without exception.
-It’s not worth trying to figure out or explain when it is OK to use TLS
-and when it’s not. Just require TLS for everything.
+要求使用 TLS 建立安全的連接來訪問 API，沒有特例。不值得嘗試找出或解釋什麼時候適合使用 TLS，而什麼時候不適合。讓全部都使用 TLS。
 
-Ideally, simply reject any non-TLS requests by not responding to requests for
-http or port 80 to avoid any insecure data exchange. In environments where this
-is not possible, respond with `403 Forbidden`.
+理想情况下，為了避免任何不安全的資料交換，應該簡單地拒絕任何 http 或 80 埠的非 TLS 請求，並不進行回應。在不能這樣做的環境下，則回傳 `403 Forbidden`。
 
-Redirects are discouraged since they allow sloppy/bad client behaviour without
-providing any clear gain.  Clients that rely on redirects double up on
-server traffic and render TLS useless since sensitive data will already
- have been exposed during the first call.
+不建議使用重導向，因為它允許馬虎和不好的客服端行為，也沒有任何明確的好處。客戶端依賴重導向會使伺服器的流量倍數增長，且會因為已經在第一次呼叫過程中暴露敏感資料而使 TLS 沒有用。
 
 #### 在 Accept 標頭中指定版本
 
-Versioning and the transition between versions can be one of the more
-challenging aspects of designing and operating an API. As such, it is best to
-start with some mechanisms in place to mitigate this from the start.
+版本化和版本間的轉換是設計與營運 API 中最具有挑戰性的方面之一。因此，最好一開始就使用一些適當的機制來減少麻煩。
 
-To prevent surprise, breaking changes to users, it is best to require a version
-be specified with all requests. Default versions should be avoided as they are
-very difficult, at best, to change in the future.
+為了避免重大改變會讓使用者的程式發生意外，所有請求最好都要指定版本。應該避免使用預設的版本，因為它在未來會非常難以變更。
 
-It is best to provide version specification in the headers, with other
-metadata, using the `Accept` header with a custom content type, e.g.:
+最好的方式是在標頭中提供版本規格還有其他的元資料 (metadata)，使用 `Accept` 標頭跟客製化的內容類型，例如：
 
 ```
 Accept: application/vnd.heroku+json; version=3
@@ -92,24 +74,15 @@ Accept: application/vnd.heroku+json; version=3
 
 #### 支援 ETag 來快取
 
-Include an `ETag` header in all responses, identifying the specific
-version of the returned resource. This allows users to cache resources
-and use requests with this value in the `If-None-Match` header to determine
-if the cache should be updated.
+在所有回應中加上 `ETag` 來識別回傳資源的特定版本。這讓使用者可以快取資源，並把這個值放在 `If-None-Match` 標頭中來做出請求，依此決定是否應該更新快取。
 
 #### 提供 Request-Id 用以追蹤檢討
 
-Include a `Request-Id` header in each API response, populated with a
-UUID value. By logging these values on the client, server and any backing
-services, it provides a mechanism to trace, diagnose and debug requests.
+在每個 API 回應中加上 `Request-Id` 標頭，附上一個 UUID 的值。藉由在客戶端、伺服器和任何依賴的服務中記錄這些值，可以提供一個機制來對請求追蹤、診斷和除錯。
 
 #### 用範圍把大型回應拆分成多個請求
 
-Large responses should be broken across multiple requests using `Range` headers
-to specify when more data is available and how to retrieve it. See the
-[Heroku Platform API discussion of Ranges](https://devcenter.heroku.com/articles/platform-api-reference#ranges)
-for the details of request and response headers, status codes, limits,
-ordering, and iteration.
+大型回應應該拆分成多個請求，使用 `Range` 標頭來指定何時有更多資料可以使用，以及要如何去取得。參閱 [Heroku 平台 API 對 Range 的討論](https://devcenter.heroku.com/articles/platform-api-reference#ranges) 來了解請求與回應標頭、狀態碼、限制次數、排序和迭代的細節。
 
 ### 請求
 
