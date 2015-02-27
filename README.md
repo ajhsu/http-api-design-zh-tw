@@ -13,40 +13,40 @@ API 起到了引導的作用。我們希望 Heroku 外面的 API 設計者也會
 
 歡迎對這份指南做出[貢獻](CONTRIBUTING.md)。
 
-## Contents
+## 內容
 
-* [Foundations](#foundations)
-  *  [Separate Concerns](#separate-concerns)
-  *  [Require Secure Connections](#require-secure-connections)
-  *  [Require Versioning in the Accepts Header](#require-versioning-in-the-accepts-header)
-  *  [Support ETags for Caching](#support-etags-for-caching)
-  *  [Provide Request-Ids for Introspection](#provide-request-ids-for-introspection)
-  *  [Divide Large Responses Across Requests with Ranges](#divide-large-responses-across-requests-with-ranges)
-* [Requests](#requests)
-  *  [Return appropriate status codes](#return-appropriate-status-codes)
-  *  [Provide full resources where available](#provide-full-resources-where-available)
-  *  [Accept serialized JSON in request bodies](#accept-serialized-json-in-request-bodies)
-  *  [Use consistent path formats](#use-consistent-path-formats)
-    *  [Downcase paths and attributes](#downcase-paths-and-attributes)
-    *  [Support non-id dereferencing for convenience](#support-non-id-dereferencing-for-convenience)
-    *  [Minimize path nesting](#minimize-path-nesting)
-* [Responses](#responses)
-  *  [Provide resource (UU)IDs](#provide-resource-uuids)
-  *  [Provide standard timestamps](#provide-standard-timestamps)
-  *  [Use UTC times formatted in ISO8601](#use-utc-times-formatted-in-iso8601)
-  *  [Nest foreign key relations](#nest-foreign-key-relations)
-  *  [Generate structured errors](#generate-structured-errors)
-  *  [Show rate limit status](#show-rate-limit-status)
-  *  [Keep JSON minified in all responses](#keep-json-minified-in-all-responses)
-* [Artifacts](#artifacts)
-  *  [Provide machine-readable JSON schema](#provide-machine-readable-json-schema)
-  *  [Provide human-readable docs](#provide-human-readable-docs)
-  *  [Provide executable examples](#provide-executable-examples)
-  *  [Describe stability](#describe-stability)
+* [基礎](#foundations)
+  *  [關注點分離](#separate-concerns)
+  *  [要求安全的連接](#require-secure-connections)
+  *  [在 Accept 標頭中指定版本](#require-versioning-in-the-accepts-header)
+  *  [支援 ETag 來快取](#support-etags-for-caching)
+  *  [提供 Request-Id 用以追蹤檢討](#provide-request-ids-for-introspection)
+  *  [用範圍把大型回應拆分成多個請求](#divide-large-responses-across-requests-with-ranges)
+* [請求](#requests)
+  *  [回傳適合的狀態碼](#return-appropriate-status-codes)
+  *  [盡可能提供完整的資源](#provide-full-resources-where-available)
+  *  [接受用 JSON 編碼的請求本體](#accept-serialized-json-in-request-bodies)
+  *  [使用一致的路徑格式](#use-consistent-path-formats)
+  *  [小寫的路徑和屬性](#downcase-paths-and-attributes)
+  *  [支援非 id 的取用給予方便](#support-non-id-dereferencing-for-convenience)
+  *  [最小化路徑巢狀](#minimize-path-nesting)
+* [回應](#responses)
+  *  [提供 (UU)ID 給資源](#provide-resource-uuids)
+  *  [提供標準的時間戳記](#provide-standard-timestamps)
+  *  [使用 ISO8601 中格式化的 UTC 時間](#use-utc-times-formatted-in-iso8601)
+  *  [巢狀的外鍵關係](#nest-foreign-key-relations)
+  *  [產生結構化的錯誤](#generate-structured-errors)
+  *  [顯示頻率限制狀態](#show-rate-limit-status)
+  *  [在所有回應中最小化 JSON](#keep-json-minified-in-all-responses)
+* [文件](#artifacts)
+  *  [提供機器可讀的 JSON 綱要](#provide-machine-readable-json-schema)
+  *  [提供人可讀的文件](#provide-human-readable-docs)
+  *  [提供可執行的範例](#provide-executable-examples)
+  *  [描述穩定度](#describe-stability)
 
-### Foundations
+### 基礎
 
-#### Separate Concerns
+#### 關注點分離
 
 Keep things simple while designing by separating the concerns between the
 different parts of the request and response cycle. Keeping simple rules here
@@ -58,7 +58,7 @@ contents and headers to communicate metadata. Query params may be used as a
 means to pass header information also in edge cases, but headers are preferred
 as they are more flexible and can convey more diverse information.
 
-#### Require Secure Connections
+#### 要求安全的連接
 
 Require secure connections with TLS to access the API, without exception.
 It’s not worth trying to figure out or explain when it is OK to use TLS
@@ -73,7 +73,7 @@ providing any clear gain.  Clients that rely on redirects double up on
 server traffic and render TLS useless since sensitive data will already
  have been exposed during the first call.
 
-#### Require Versioning in the Accepts Header
+#### 在 Accept 標頭中指定版本
 
 Versioning and the transition between versions can be one of the more
 challenging aspects of designing and operating an API. As such, it is best to
@@ -90,20 +90,20 @@ metadata, using the `Accept` header with a custom content type, e.g.:
 Accept: application/vnd.heroku+json; version=3
 ```
 
-#### Support ETags for Caching
+#### 支援 ETag 來快取
 
 Include an `ETag` header in all responses, identifying the specific
 version of the returned resource. This allows users to cache resources
 and use requests with this value in the `If-None-Match` header to determine
 if the cache should be updated.
 
-#### Provide Request-Ids for Introspection
+#### 提供 Request-Id 用以追蹤檢討
 
 Include a `Request-Id` header in each API response, populated with a
 UUID value. By logging these values on the client, server and any backing
 services, it provides a mechanism to trace, diagnose and debug requests.
 
-#### Divide Large Responses Across Requests with Ranges
+#### 用範圍把大型回應拆分成多個請求
 
 Large responses should be broken across multiple requests using `Range` headers
 to specify when more data is available and how to retrieve it. See the
@@ -111,9 +111,9 @@ to specify when more data is available and how to retrieve it. See the
 for the details of request and response headers, status codes, limits,
 ordering, and iteration.
 
-### Requests
+### 請求
 
-#### Return appropriate status codes
+#### 回傳適合的狀態碼
 
 Return appropriate HTTP status codes with each response. Successful
 responses should be coded according to this guide:
@@ -143,7 +143,7 @@ Return suitable codes to provide additional information when there are errors:
 Refer to the [HTTP response code spec](https://tools.ietf.org/html/rfc7231#section-6)
 for guidance on status codes for user error and server error cases.
 
-#### Provide full resources where available
+#### 盡可能提供完整的資源
 
 Provide the full resource representation (i.e. the object with all
 attributes) whenever possible in the response. Always provide the full
@@ -178,7 +178,7 @@ Content-Type: application/json;charset=utf-8
 {}
 ```
 
-#### Accept serialized JSON in request bodies
+#### 接受用 JSON 編碼的請求本體
 
 Accept serialized JSON on `PUT`/`PATCH`/`POST` request bodies, either
 instead of or in addition to form-encoded data. This creates symmetry
@@ -200,7 +200,7 @@ $ curl -X POST https://service.com/apps \
 }
 ```
 
-#### Use consistent path formats
+#### 使用一致的路徑格式
 
 ##### Resource names
 
@@ -222,7 +222,7 @@ e.g.
 /runs/{run_id}/actions/stop
 ```
 
-#### Downcase paths and attributes
+#### 小寫的路徑和屬性
 
 Use downcased and dash-separated path names, for alignment with
 hostnames, e.g:
@@ -239,7 +239,7 @@ attribute names can be typed without quotes in JavaScript, e.g.:
 service_class: "first"
 ```
 
-#### Support non-id dereferencing for convenience
+#### 支援非 id 的取用給予方便
 
 In some cases it may be inconvenient for end-users to provide IDs to
 identify a resource. For example, a user may think in terms of a Heroku
@@ -254,7 +254,7 @@ $ curl https://service.com/apps/www-prod
 
 Do not accept only names to the exclusion of IDs.
 
-#### Minimize path nesting
+#### 最小化路徑巢狀
 
 In data models with nested parent/child resource relationships, paths
 may become deeply nested, e.g.:
@@ -275,9 +275,9 @@ case above where a dyno belongs to an app belongs to an org:
 /dynos/{dyno_id}
 ```
 
-### Responses
+### 回應
 
-#### Provide resource (UU)IDs
+#### 提供 (UU)ID 給資源
 
 Give each resource an `id` attribute by default. Use UUIDs unless you
 have a very good reason not to. Don’t use IDs that won’t be globally
@@ -290,7 +290,7 @@ Render UUIDs in downcased `8-4-4-4-12` format, e.g.:
 "id": "01234567-89ab-cdef-0123-456789abcdef"
 ```
 
-#### Provide standard timestamps
+#### 提供標準的時間戳記
 
 Provide `created_at` and `updated_at` timestamps for resources by default,
 e.g:
@@ -307,7 +307,7 @@ e.g:
 These timestamps may not make sense for some resources, in which case
 they can be omitted.
 
-#### Use UTC times formatted in ISO8601
+#### 使用 ISO8601 中格式化的 UTC 時間
 
 Accept and return times in UTC only. Render times in ISO8601 format,
 e.g.:
@@ -316,7 +316,7 @@ e.g.:
 "finished_at": "2012-01-01T12:00:00Z"
 ```
 
-#### Nest foreign key relations
+#### 巢狀的外鍵關係
 
 Serialize foreign key references with a nested object, e.g.:
 
@@ -356,7 +356,7 @@ or introduce more top-level response fields, e.g.:
 }
 ```
 
-#### Generate structured errors
+#### 產生結構化的錯誤
 
 Generate consistent, structured response bodies on errors. Include a
 machine-readable error `id`, a human-readable error `message`, and
@@ -378,7 +378,7 @@ HTTP/1.1 429 Too Many Requests
 Document your error format and the possible error `id`s that clients may
 encounter.
 
-#### Show rate limit status
+#### 顯示頻率限制狀態
 
 Rate limit requests from clients to protect the health of the service
 and maintain high service quality for other clients. You can use a
@@ -388,7 +388,7 @@ quantify request limits.
 Return the remaining number of request tokens with each request in the
 `RateLimit-Remaining` response header.
 
-#### Keep JSON minified in all responses
+#### 在所有回應中最小化 JSON
 
 Extra whitespace adds needless response size to requests, and many
 clients for human consumption will automatically "prettify" JSON
@@ -416,15 +416,15 @@ more verbose response, either via a query parameter (e.g. `?pretty=true`)
 or via an `Accept` header param (e.g.
 `Accept: application/vnd.heroku+json; version=3; indent=4;`).
 
-### Artifacts
+### 文件
 
-#### Provide machine-readable JSON schema
+#### 提供機器可讀的 JSON 綱要
 
 Provide a machine-readable schema to exactly specify your API. Use
 [prmd](https://github.com/interagent/prmd) to manage your schema, and ensure
 it validates with `prmd verify`.
 
-#### Provide human-readable docs
+#### 提供人可讀的文件
 
 Provide human-readable documentation that client developers can use to
 understand your API.
@@ -442,7 +442,7 @@ information about:
 * Error serialization format.
 * Examples of using the API with clients in different languages.
 
-#### Provide executable examples
+#### 提供可執行的範例
 
 Provide executable examples that users can type directly into their
 terminals to see working API calls. To the greatest extent possible,
@@ -457,7 +457,7 @@ $ curl -is https://$TOKEN@service.com/users
 If you use [prmd](https://github.com/interagent/prmd) to generate Markdown
 docs, you will get examples for each endpoint for free.
 
-#### Describe stability
+#### 描述穩定度
 
 Describe the stability of your API or its various endpoints according to
 its maturity and stability, e.g. with prototype/development/production
