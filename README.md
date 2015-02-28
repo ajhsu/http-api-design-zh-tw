@@ -23,7 +23,7 @@ API 起到了引導的作用。我們希望 Heroku 外面的 API 設計者也會
   *  [提供 Request-Id 用以追蹤檢討](#提供-request-id-用以追蹤檢討)
   *  [用範圍把大型回應拆分成多個請求](#用範圍把大型回應拆分成多個請求)
 * [請求](#請求)
-  *  [回傳適合的狀態碼](#回傳適合的狀態碼)
+  *  [回傳適當的狀態碼](#回傳適當的狀態碼)
   *  [盡可能提供完整的資源](#盡可能提供完整的資源)
   *  [接受用 JSON 編碼的請求本體](#接受用-json-編碼的請求本體)
   *  [使用一致的路徑格式](#使用一致的路徑格式)
@@ -86,42 +86,32 @@ Accept: application/vnd.heroku+json; version=3
 
 ### 請求
 
-#### 回傳適合的狀態碼
+#### 回傳適當的狀態碼
 
-Return appropriate HTTP status codes with each response. Successful
-responses should be coded according to this guide:
+隨著每個回應回傳適當的 HTTP 狀態碼。成功的回應應該依照這份指南給予狀態碼：
 
-* `200`: Request succeeded for a `GET` call, for a `DELETE` or
-  `PATCH` call that completed synchronously, or for a `PUT` call that
-  synchronously updated an existing resource
-* `201`: Request succeeded for a `POST` call that completed
-  synchronously, or for a `PUT` call that synchronously created a new
-  resource
-* `202`: Request accepted for a `POST`, `PUT`, `DELETE`, or `PATCH` call that
-  will be processed asynchronously
-* `206`: Request succeeded on `GET`, but only a partial response
-  returned: see [above on ranges](#divide-large-responses-across-requests-with-ranges)
+* `200`：`GET` 請求成功、`DELETE` 或 `PATCH` 請求同步地完成，或是 `PUT` 請求同步地更新了存在的資源時
+* `201`：`POST` 請求同步地成功完成，或是 `PUT` 請求同步地建立了新的資源時
+* `202`：已經接受將會被非同步處理的 `POST`、`PUT`、`DELETE` 或 `PATCH` 請求
+* `206`：`GET` 請求已經成功，但只有回應一部分：參閱[前面提到範圍的部分](#divide-large-responses-across-requests-with-ranges)
 
-Pay attention to the use of authentication and authorization error codes:
+使用認證和授權錯誤碼必須小心：
 
-* `401 Unauthorized`: Request failed because user is not authenticated
-* `403 Forbidden`: Request failed because user does not have authorization to access a specific resource
+* `401 Unauthorized`：因為使用者沒有認證，所以請求失敗
+* `403 Forbidden`：因為使用者沒有權限可以訪問特定的資源，所以請求失敗
 
-Return suitable codes to provide additional information when there are errors:
+當發生錯誤的時候，回傳適合的狀態碼以提供額外的資訊：
 
-* `422 Unprocessable Entity`: Your request was understood, but contained invalid parameters
-* `429 Too Many Requests`: You have been rate-limited, retry later
-* `500 Internal Server Error`: Something went wrong on the server, check status site and/or report the issue
+* `422 Unprocessable Entity`：你的請求已經被解析，但其中包含不合法的參數
+* `429 Too Many Requests`：你已經到了使用頻率上限，稍後再試
+* `500 Internal Server Error`：伺服器發生了一些錯誤，檢查網站狀態並回報問題
 
-Refer to the [HTTP response code spec](https://tools.ietf.org/html/rfc7231#section-6)
-for guidance on status codes for user error and server error cases.
+參考 [HTTP 回應碼規格](https://tools.ietf.org/html/rfc7231#section-6) 以了解使用者端錯誤和伺服器錯誤情況下的狀態碼。
 
 #### 盡可能提供完整的資源
 
-Provide the full resource representation (i.e. the object with all
-attributes) whenever possible in the response. Always provide the full
-resource on 200 and 201 responses, including `PUT`/`PATCH` and `DELETE`
-requests, e.g.:
+在可能的情況下，在回應中提供完整的資源表示 (換句話說，包含所有屬性的物件)。總是在 200 和 201 回應中提供完整的資源，包括 `PUT`/`PATCH` 和 `DELETE`
+請求，例如：
 
 ```bash
 $ curl -X DELETE \
@@ -138,8 +128,7 @@ Content-Type: application/json;charset=utf-8
 }
 ```
 
-202 responses will not include the full resource representation,
-e.g.:
+202 回應將不會包含完整的資源表示，例如：
 
 ```bash
 $ curl -X DELETE \
@@ -153,9 +142,7 @@ Content-Type: application/json;charset=utf-8
 
 #### 接受用 JSON 編碼的請求本體
 
-Accept serialized JSON on `PUT`/`PATCH`/`POST` request bodies, either
-instead of or in addition to form-encoded data. This creates symmetry
-with JSON-serialized response bodies, e.g.:
+在 `PUT`/`PATCH`/`POST` 請求接受用 JSON 編碼的請求本體，作為表單編碼資料的替代或補充。這建立了與 JSON 編碼的回應本體之間的對稱，例如：
 
 ```bash
 $ curl -X POST https://service.com/apps \
@@ -175,7 +162,7 @@ $ curl -X POST https://service.com/apps \
 
 #### 使用一致的路徑格式
 
-##### Resource names
+##### 資源名稱
 
 Use the plural version of a resource name unless the resource in question is a singleton within the system (for example, in most systems a given user would only ever have one account). This keeps it consistent in the way you refer to particular resources.
 
@@ -197,8 +184,8 @@ e.g.
 
 #### 小寫的路徑和屬性
 
-Use downcased and dash-separated path names, for alignment with
-hostnames, e.g:
+使用小寫 and dash-separated path names, for alignment with
+hostnames，例如：
 
 ```
 service-api.com/users
