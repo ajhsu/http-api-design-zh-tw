@@ -349,54 +349,39 @@ HTTP/1.1 429 Too Many Requests
 
 #### 提供機器可讀的 JSON schema
 
-Provide a machine-readable schema to exactly specify your API. Use
-[prmd](https://github.com/interagent/prmd) to manage your schema, and ensure
-it validates with `prmd verify`.
+提供機器可讀的 schema 來明確地指定 API。使用 [prmd](https://github.com/interagent/prmd) 來管理你的 schema，並確保
+它使用 `prmd verify` 驗證過。
 
 #### 提供人可讀的文件
 
-Provide human-readable documentation that client developers can use to
-understand your API.
+提供人可讀的文件讓客戶端開發者可以用它來了解你的 API。
 
-If you create a schema with prmd as described above, you can easily
-generate Markdown docs for all endpoints with with `prmd doc`.
+如果你如上所述的使用 prmd 建立 schema，你可以輕鬆地用 `prmd doc` 產生所有端點的 Markdown 文件。
 
-In addition to endpoint details, provide an API overview with
-information about:
+附帶的端點細節，應該提供 API 的包含以下資訊的概覽：
 
-* Authentication, including acquiring and using authentication tokens.
-* API stability and versioning, including how to select the desired API
-  version.
-* Common request and response headers.
-* Error serialization format.
-* Examples of using the API with clients in different languages.
+* 認證，包括獲得和使用認證 token。
+* API 穩定度和版本狀況，包含要如何選擇想要的 API 版本。
+* 常用的請求和回應標頭。
+* 错误的格式。
+* 不同客戶端程式語言的 API 使用範例。
 
 #### 提供可執行的範例
 
-Provide executable examples that users can type directly into their
-terminals to see working API calls. To the greatest extent possible,
-these examples should be usable verbatim, to minimize the amount of
-work a user needs to do to try the API, e.g.:
+提供可執行的範例讓使用者可以直接地在終端機輸入它來看可執行的 API 呼叫。為了最大的可擴展性，這些例子應該可以逐字使用，以最小化使用者嘗試 API 所需要做的事，例如：
 
 ```bash
 $ export TOKEN=... # acquire from dashboard
 $ curl -is https://$TOKEN@service.com/users
 ```
 
-If you use [prmd](https://github.com/interagent/prmd) to generate Markdown
-docs, you will get examples for each endpoint for free.
+如果你使用 [prmd](https://github.com/interagent/prmd) 來產生 Markdown 文件，你將會很容易地獲得每個端點的範例。
 
 #### 描述穩定度
 
-Describe the stability of your API or its various endpoints according to
-its maturity and stability, e.g. with prototype/development/production
-flags.
+描述你的 API 的穩定度和它多個端點的成熟度和穩定度，例如：伴隨著原型/開發/產品標誌。
 
-See the [Heroku API compatibility policy](https://devcenter.heroku.com/articles/api-compatibility-policy)
-for a possible stability and change management approach.
+參閱 [Heroku API 相容性政策](https://devcenter.heroku.com/articles/api-compatibility-policy) 以了解可能的穩定度和變更管理的方法。
 
-Once your API is declared production-ready and stable, do not make
-backwards incompatible changes within that API version. If you need to
-make backwards-incompatible changes, create a new API with an
-incremented version number.
+一旦 API 宣告為生產環境適用且為穩定的，在此 API 版本中不要做不向下相容的變更。如果你需要不向下相容的變更，用遞增的版本號建立一個新的 API。
 
