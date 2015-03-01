@@ -39,7 +39,7 @@ API 起到了引導的作用。我們希望 Heroku 外面的 API 設計者也會
   *  [顯示頻率限制狀態](#顯示頻率限制狀態)
   *  [在所有回應中最小化 JSON](#在所有回應中最小化-json)
 * [文件](#文件)
-  *  [提供機器可讀的 JSON 綱要](#提供機器可讀的-json-綱要)
+  *  [提供機器可讀的 JSON schema](#提供機器可讀的-json-schema)
   *  [提供人可讀的文件](#提供人可讀的文件)
   *  [提供可執行的範例](#提供可執行的範例)
   *  [描述穩定度](#描述穩定度)
@@ -300,10 +300,7 @@ $ curl https://service.com/apps/www-prod
 
 #### 產生結構化的錯誤
 
-Generate consistent, structured response bodies on errors. Include a
-machine-readable error `id`, a human-readable error `message`, and
-optionally a `url` pointing the client to further information about the
-error and how to resolve it，例如：
+再發生錯誤時，產生一致、結構化的回應本體。包含一個機器可讀的錯誤 `id`、一個人可讀的錯誤 `message` 和選擇性地提供 `url` 指引客戶端找到更多有關錯誤和如何解決它的資訊，例如：
 
 ```
 HTTP/1.1 429 Too Many Requests
@@ -317,24 +314,17 @@ HTTP/1.1 429 Too Many Requests
 }
 ```
 
-Document your error format and the possible error `id`s that clients may
-encounter.
+文件化你的錯誤格式和客戶端可能會遇到的錯誤 `id`。
 
 #### 顯示頻率限制狀態
 
-Rate limit requests from clients to protect the health of the service
-and maintain high service quality for other clients. You can use a
-[token bucket algorithm](http://en.wikipedia.org/wiki/Token_bucket) to
-quantify request limits.
+限制客戶端的請求頻率以保護服務的健壯，並維持其他客戶端的高服務品質。你可以使用 [token bucket algorithm](http://en.wikipedia.org/wiki/Token_bucket) 來量化請求限制。
 
-Return the remaining number of request tokens with each request in the
-`RateLimit-Remaining` response header.
+在每個請求的 `RateLimit-Remaining` 回應標頭中回傳請求 token 的剩餘次數。
 
 #### 在所有回應中最小化 JSON
 
-多餘的空白 adds needless response size to requests, and many
-clients for human consumption will automatically "prettify" JSON
-output。 It is best to keep JSON responses minified，例如：
+多餘的空白會增加回應請求的大小，而且很多給人看的客戶端都會自動地「美化」JSON 輸出。所以最好在回應中最小化 JSON，例如：
 
 ```json
 {"beta":false,"email":"alice@heroku.com","id":"01234567-89ab-cdef-0123-456789abcdef","last_login":"2012-01-01T12:00:00Z","created_at":"2012-01-01T12:00:00Z","updated_at":"2012-01-01T12:00:00Z"}
@@ -353,14 +343,11 @@ output。 It is best to keep JSON responses minified，例如：
 }
 ```
 
-You may consider optionally providing a way for clients to retreive
-more verbose response, either via a query parameter (e.g. `?pretty=true`)
-or via an `Accept` header param (e.g.
-`Accept: application/vnd.heroku+json; version=3; indent=4;`).
+你可以考慮選擇性地提供一個方法讓客戶端取回更詳細的回應，可以藉由查詢參數 (例如：`?pretty=true`) 或者是藉由 `Accept` 標頭參數 (例如：`Accept: application/vnd.heroku+json; version=3; indent=4;`)。
 
 ### 文件
 
-#### 提供機器可讀的 JSON 綱要
+#### 提供機器可讀的 JSON schema
 
 Provide a machine-readable schema to exactly specify your API. Use
 [prmd](https://github.com/interagent/prmd) to manage your schema, and ensure
