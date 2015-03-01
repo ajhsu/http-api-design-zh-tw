@@ -229,12 +229,9 @@ $ curl https://service.com/apps/www-prod
 
 #### 提供 (UU)ID 給資源
 
-Give each resource an `id` attribute by default. Use UUIDs unless you
-have a very good reason not to. Don’t use IDs that won’t be globally
-unique across instances of the service or other resources in the
-service, especially auto-incrementing IDs.
+預設給每個資源一個 `id` 屬性。使用 UUID，除你你有非常好的理由不這樣做。不要使用不是跨越機器或服務全域唯一的 ID，特別是自動遞增的 ID。
 
-Render UUIDs in downcased `8-4-4-4-12` format, e.g.:
+用小寫的 `8-4-4-4-12` 格式來輸出 UUID，例如：
 
 ```
 "id": "01234567-89ab-cdef-0123-456789abcdef"
@@ -242,8 +239,7 @@ Render UUIDs in downcased `8-4-4-4-12` format, e.g.:
 
 #### 提供標準的時間戳記
 
-Provide `created_at` and `updated_at` timestamps for resources by default,
-e.g:
+預設提供 `created_at` 與 `updated_at` 時間戳記給資源，例如：
 
 ```javascript
 {
@@ -254,13 +250,11 @@ e.g:
 }
 ```
 
-These timestamps may not make sense for some resources, in which case
-they can be omitted.
+這些時間戳記對某些資源或許沒有意義，在那樣的情況下可以省略。
 
 #### 使用 ISO8601 中格式化的 UTC 時間
 
-Accept and return times in UTC only. Render times in ISO8601 format,
-e.g.:
+只用 UTC 接受和回傳時間。用 ISO8601 格式輸出時間，例如：
 
 ```
 "finished_at": "2012-01-01T12:00:00Z"
@@ -268,7 +262,7 @@ e.g.:
 
 #### 巢狀的外鍵關係
 
-Serialize foreign key references with a nested object, e.g.:
+序列化外鍵參考為一個巢狀物件，例如：
 
 ```javascript
 {
@@ -280,7 +274,7 @@ Serialize foreign key references with a nested object, e.g.:
 }
 ```
 
-Instead of e.g.:
+而不是：
 
 ```javascript
 {
@@ -290,9 +284,7 @@ Instead of e.g.:
 }
 ```
 
-This approach makes it possible to inline more information about the
-related resource without having to change the structure of the response
-or introduce more top-level response fields, e.g.:
+用這個方法來加入更多關聯資源的資訊，使不必改變回應的結構或加入更多頂層的回應欄位變得可能，例如：
 
 ```javascript
 {
@@ -311,7 +303,7 @@ or introduce more top-level response fields, e.g.:
 Generate consistent, structured response bodies on errors. Include a
 machine-readable error `id`, a human-readable error `message`, and
 optionally a `url` pointing the client to further information about the
-error and how to resolve it, e.g.:
+error and how to resolve it，例如：
 
 ```
 HTTP/1.1 429 Too Many Requests
@@ -340,15 +332,15 @@ Return the remaining number of request tokens with each request in the
 
 #### 在所有回應中最小化 JSON
 
-Extra whitespace adds needless response size to requests, and many
+多餘的空白 adds needless response size to requests, and many
 clients for human consumption will automatically "prettify" JSON
-output. It is best to keep JSON responses minified e.g.:
+output。 It is best to keep JSON responses minified，例如：
 
 ```json
 {"beta":false,"email":"alice@heroku.com","id":"01234567-89ab-cdef-0123-456789abcdef","last_login":"2012-01-01T12:00:00Z","created_at":"2012-01-01T12:00:00Z","updated_at":"2012-01-01T12:00:00Z"}
 ```
 
-Instead of e.g.:
+而不是：
 
 ```json
 {
