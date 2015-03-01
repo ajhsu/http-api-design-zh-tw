@@ -164,19 +164,17 @@ $ curl -X POST https://service.com/apps \
 
 ##### 資源名稱
 
-Use the plural version of a resource name unless the resource in question is a singleton within the system (for example, in most systems a given user would only ever have one account). This keeps it consistent in the way you refer to particular resources.
+使用複數版本的資源名稱，除非資源是單體存在於系統之中 (例如，在大多數系統中一個給定的使用者將只會擁有一個帳戶)。這讓參考特定的資源的方式可以保持一致。
 
-##### Actions
+##### 操作
 
-Prefer endpoint layouts that don’t need any special actions for
-individual resources. In cases where special actions are needed, place
-them under a standard `actions` prefix, to clearly delineate them:
+對於不需要任何特別的操作的個別資源，應該用端點 (endpoint) 佈局。在需要特別操作的情快下，把他們放置在標準的 `actions` 前綴後面，來清楚的界定他們：
 
 ```
 /resources/:resource/actions/:action
 ```
 
-e.g.
+例如
 
 ```
 /runs/{run_id}/actions/stop
@@ -184,16 +182,14 @@ e.g.
 
 #### 小寫的路徑和屬性
 
-使用小寫 and dash-separated path names, for alignment with
-hostnames，例如：
+使用小寫、中線分隔的路徑名稱，與主機名稱一致，例如：
 
 ```
 service-api.com/users
 service-api.com/app-setups
 ```
 
-Downcase attributes as well, but use underscore separators so that
-attribute names can be typed without quotes in JavaScript, e.g.:
+屬性也使用小寫，但使用底線來分隔，這樣的話在 JavaScript 中可以不用括號打出屬性名稱，例如：
 
 ```
 service_class: "first"
@@ -201,10 +197,7 @@ service_class: "first"
 
 #### 支援非 id 的取用給予方便
 
-In some cases it may be inconvenient for end-users to provide IDs to
-identify a resource. For example, a user may think in terms of a Heroku
-app name, but that app may be identified by a UUID. In these cases you
-may want to accept both an id or name, e.g.:
+在某些情況下，讓終端使用者提供 ID 來辨識資源或許不是很方便。例如，使用者想的或許是 Heroku 的應用程式名稱，但是那個應用程式可能是用 UUID 來辨識的。在這種情況下，你可能會想要同時接受 id 或名稱，例如：
 
 ```bash
 $ curl https://service.com/apps/{app_id_or_name}
@@ -212,20 +205,17 @@ $ curl https://service.com/apps/97addcf0-c182
 $ curl https://service.com/apps/www-prod
 ```
 
-Do not accept only names to the exclusion of IDs.
+不要只接受名稱而排除 ID。
 
 #### 最小化路徑巢狀
 
-In data models with nested parent/child resource relationships, paths
-may become deeply nested, e.g.:
+在資料模型中有父子的巢狀資源關係，路徑可能會變成深度巢狀，例如：
 
 ```
 /orgs/{org_id}/apps/{app_id}/dynos/{dyno_id}
 ```
 
-Limit nesting depth by preferring to locate resources at the root
-path. Use nesting to indicate scoped collections. For example, for the
-case above where a dyno belongs to an app belongs to an org:
+應該藉由在根路徑定位資源，來限制巢狀的深度。使用巢狀來表示一個範疇中的集合。例如，上面的例子中，dyno 屬於一個 app，app 屬於一個 org：
 
 ```
 /orgs/{org_id}
